@@ -15,14 +15,14 @@ public class StringService {
     public static final long MAX_DELAY_MILLIS = 1000;
     public static final long TIMEOUT_MILLIS = 500;
 
-    public static final String lineSeperator = System.getProperty("line.seperator");
+    public static final String lineSeperator = System.getProperty("line.separator");
     public static final String FALLBACK_STRING = "FALLBACK!";
 
     @HystrixCommand(
-//            commandProperties = {
-//                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "" + TIMEOUT_MILLIS)
-//            },
-//            defaultFallback = "fallback",
+            commandProperties = {
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "" + TIMEOUT_MILLIS)
+            },
+            defaultFallback = "fallback"
 //            threadPoolKey = "StringService.getRandomStringWithDelay"
     )
     public String getRandomStringWithDelay() throws InterruptedException {
@@ -33,11 +33,11 @@ public class StringService {
 
     private String getRandomString(){
         int numChars = RandomUtils.nextInt(0, MAX_STRING_LENGTH);
-        return RandomStringUtils.randomAlphanumeric(numChars);// + lineSeperator;
+        return RandomStringUtils.randomAlphanumeric(numChars) + lineSeperator;
     }
 
     private String fallback(){
-        return FALLBACK_STRING;
+        return FALLBACK_STRING + lineSeperator;
     }
 
 }
