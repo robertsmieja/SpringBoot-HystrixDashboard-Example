@@ -20,11 +20,13 @@ public class MainController {
 
     @GetMapping(path = "/randomString", produces = "text/plain")
     public String getRandomString() throws InterruptedException {
-        return stringService.getRandomStringWithDelay();
+//        return stringService.getRandomStringWithDelay();
+        return new RandomStringCommand(stringService).execute();
     }
 
     @GetMapping(path = "/randomStringStream/{delay}", produces = "text/event-stream")
-    public Observable<String> getRandomStringStream(@PathVariable("delay")long delayMillis){
-        return Observable.fromCallable(stringService::getRandomStringWithDelay).repeat().delay(delayMillis, TimeUnit.MILLISECONDS);
+    public Observable<String> getRandomStringStream(@PathVariable("delay") long delayMillis) {
+        RandomStringCommand command = new RandomStringCommand(stringService);
+        return Observable.fromCallable(command::execute).delay(delayMillis, TimeUnit.MILLISECONDS);
     }
 }
