@@ -21,3 +21,7 @@ Then the following URLs become available:
 
 - Dashboard:
 ```http://localhost:8080/hystrix/monitor?stream=http%3A%2F%2Flocalhost%3A8080%2Factuator%2Fhystrix.stream```
+
+Further Reading
+===============
+https://github.com/Netflix/Hystrix/wiki/How-To-Use
