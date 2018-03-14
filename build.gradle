@@ -27,7 +27,7 @@ repositories {
 
 
 ext {
-	springCloudVersion = 'Finchley.M7'
+	springCloudVersion = 'Finchley.M8'
 }
 
 dependencies {
@@ -49,3 +49,6 @@ dependencyManagement {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 	}
 }
+
+
+tasks['eclipse'].dependsOn tasks['cleanEclipse']
