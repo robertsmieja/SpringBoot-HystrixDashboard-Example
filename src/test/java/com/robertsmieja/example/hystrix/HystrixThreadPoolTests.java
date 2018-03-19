@@ -5,7 +5,6 @@ import com.netflix.hystrix.strategy.HystrixPlugins;
 import org.junit.Test;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -17,50 +16,6 @@ public class HystrixThreadPoolTests {
     public static final HystrixCommandGroupKey GROUP_KEY = HystrixCommandGroupKey.Factory.asKey(className);
     public static final HystrixThreadPoolKey THREAD_POOL_KEY = HystrixThreadPoolKey.Factory.asKey(className);
     public static final String FALLBACK = "fallback";
-
-    public static class ThreadCommand extends HystrixCommand<String> {
-        public final String returnValue;
-
-        public ThreadCommand(String returnValue) {
-            super(Setter
-                    .withGroupKey(GROUP_KEY)
-                    .andThreadPoolKey(THREAD_POOL_KEY)
-                    .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
-                            .withExecutionTimeoutEnabled(false)
-                            .withCircuitBreakerEnabled(false)
-                            .withRequestCacheEnabled(false)
-                            .withFallbackEnabled(true)
-                    )
-                    .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()
-                            .withCoreSize(2)
-                            .withAllowMaximumSizeToDivergeFromCoreSize(false)
-                            .withMaxQueueSize(-1)
-                    )
-            );
-            this.returnValue = returnValue;
-        }
-
-        @Override
-        protected String getFallback() {
-            return FALLBACK + returnValue;
-        }
-
-        @Override
-        protected String run() throws Exception {
-            //Block forever
-            try {
-                while (true) {
-                    Thread.sleep(0);
-                }
-            } catch (InterruptedException e){
-                throw e;
-            }
-        }
-
-        public HystrixThreadPool.HystrixThreadPoolDefault getThreadPool(){
-            return (HystrixThreadPool.HystrixThreadPoolDefault) this.threadPool;
-        }
-    }
 
     @Test
     public void testDefaultHystrixBehavior() throws ExecutionException, InterruptedException {
@@ -138,5 +93,49 @@ public class HystrixThreadPoolTests {
         assertFalse(result3.isCancelled());
 
         assertEquals("fallback3", result3.get());
+    }
+
+    public static class ThreadCommand extends HystrixCommand<String> {
+        public final String returnValue;
+
+        public ThreadCommand(String returnValue) {
+            super(Setter
+                    .withGroupKey(GROUP_KEY)
+                    .andThreadPoolKey(THREAD_POOL_KEY)
+                    .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
+                            .withExecutionTimeoutEnabled(false)
+                            .withCircuitBreakerEnabled(false)
+                            .withRequestCacheEnabled(false)
+                            .withFallbackEnabled(true)
+                    )
+                    .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()
+                            .withCoreSize(2)
+                            .withAllowMaximumSizeToDivergeFromCoreSize(false)
+                            .withMaxQueueSize(-1)
+                    )
+            );
+            this.returnValue = returnValue;
+        }
+
+        @Override
+        protected String getFallback() {
+            return FALLBACK + returnValue;
+        }
+
+        @Override
+        protected String run() throws Exception {
+            //Block forever
+            try {
+                while (true) {
+                    Thread.sleep(0);
+                }
+            } catch (InterruptedException e) {
+                throw e;
+            }
+        }
+
+        public HystrixThreadPool.HystrixThreadPoolDefault getThreadPool() {
+            return (HystrixThreadPool.HystrixThreadPoolDefault) this.threadPool;
+        }
     }
 }
